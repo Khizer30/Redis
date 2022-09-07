@@ -1,0 +1,118 @@
+/* Nav */
+.navBar 
+{
+  min-height: 10vh ;
+  background: var(--bs-gray-dark) ;
+}
+
+.navBarHeading 
+{
+  font-size: 2em ;
+  color: var(--bs-gray-100) !important ;
+  font-family: "Akaya Telivigala", serif ;
+  text-align: center ;
+}
+
+/* Main */
+.mainHeading 
+{
+  font-family: "Akaya Telivigala", serif ;
+  font-weight: bold ;
+  font-size: 1.75em ;
+  text-align: center ;
+  margin-top: 0.5rem ;
+  margin-bottom: 0.5rem ;
+}
+
+.mainText 
+{
+  font-family: Raleway, sans-serif ;
+  font-size: 1em ;
+  font-weight: bold ;
+  margin-top: 0.5rem ;
+  margin-bottom: 0.5rem ;
+}
+
+/* Main Btn */
+.mainBtn 
+{
+  margin-top: 0.5rem ;
+  margin-bottom: 0.5rem ;
+  width: 150px ;
+  height: 45px ;
+  font-family: Raleway, sans-serif ;
+  color: var(--bs-gray-100) ;
+  font-size: 1em ;
+  font-weight: bold ;
+  text-align: center ;
+  background: var(--bs-gray-dark) ;
+  border-style: none ;
+  border-radius: 10px ;
+
+  transition: background ;
+  transition-duration: 500ms ;
+  transition-timing-function: ease ;
+}
+
+.mainBtn:hover
+{
+  background: var(--bs-gray-500) ;
+}
+
+.mainBtn:active
+{
+  background: var(--bs-gray-dark) ;
+  box-shadow: 1px 1px var(--bs-gray-500) ;
+}
+
+/* Body */
+body
+{
+  height: 100vh ;
+  margin: 0% ;
+  display: flex ;
+  flex-direction: column ;
+}
+
+/* Footer */
+footer 
+{
+  margin-top: auto ;
+  min-height: 10vh ;
+  background: var(--bs-gray-dark) ;
+}
+
+/* Form Control */
+.form-control:focus
+{
+  border-color: var(--bs-gray-dark) ;
+  box-shadow: 3px 3px var(--bs-gray-dark) ;
+}
+
+/* Form Select */
+.form-select:focus
+{
+  border-color: var(--bs-gray-dark) ;
+  box-shadow: 3px 3px var(--bs-gray-dark) ;
+}
+
+/* Default */
+.margin1 
+{
+  margin: 1rem ;
+}
+
+p
+{
+  cursor: default ;
+}
+
+.displayNone
+{
+  display: none ;
+}
+
+.bold
+{
+  font-weight: bold ;
+}
