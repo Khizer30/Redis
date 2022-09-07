@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react" ;
+import React, { useState } from "react" ;
 import Head from "next/head" ;
 // ...
+import { getStudents } from "../config/redis" ;
 import { getAPI, postAPI, checkInput } from "../lib/library" ;
 import type { Res, StudentObj, AddRequest, RemoveRequest } from "../lib/library" ;
 
@@ -13,12 +14,32 @@ interface Inputs
   search: string ;
 }
 
+// Props Interface
+interface Props
+{
+  students: StudentObj[] ;
+}
+
+// SSR
+export async function getServerSideProps()
+{
+  let res: Res = JSON.parse(await getStudents()) ;
+  let students: StudentObj[] = [] ;
+
+  if (res.code === 200)
+  {
+    students = JSON.parse(res.message) ;
+  }
+
+  return { props: { students } } ;
+}
+
 // Home
-function Home(): JSX.Element
+function Home(props: Props): JSX.Element
 {
   // Variables
   const [inputs, setInputs] = useState<Inputs>({ name: "", reg: "", student: "NULL", search: "" }) ;
-  const [students, setStudents] = useState<StudentObj[]>([]) ;
+  const [students, setStudents] = useState<StudentObj[]>(props.students) ;
 
   // Handle Change
   function handleChange(event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>)
@@ -36,14 +57,10 @@ function Home(): JSX.Element
   async function getStudents()
   {
     let res: Res = await getAPI("http://localhost:3000/api/get_students") ;
-    setStudents(res.message) ;
+    
+    let temp: StudentObj[] = JSON.parse(res.message) ;
+    setStudents(temp) ;
   }
-
-  // Effect
-  useEffect(() =>
-  {
-    getStudents() ;
-  }, [inputs.student]) ;
 
   // Students Mapper
   function studentsMapper(x: StudentObj): JSX.Element
@@ -61,12 +78,14 @@ function Home(): JSX.Element
     if (checkInput(inputs.name, 100) && checkInput(inputs.reg, 100))
     {
       let data: AddRequest = { name: inputs.name, reg: inputs.reg } ;
-      let res: Res = await postAPI("http://localhost:3000/api/add", data) ;
+      let res: Res = await postAPI("http://localhost:3000/api/add_student", data) ;
 
       // Reset
       setInputs({ name: "", reg: "", student: "NULL", search: "" }) ;
+      getStudents() ;
 
-      console.log(res) ;
+      console.log(`Code: ${ res.code }`) ;
+      console.log(`Message: ${ res.message }`) ;
     }
     else
     {
@@ -80,12 +99,14 @@ function Home(): JSX.Element
     if (inputs.student !== "NULL")
     {
       let data: RemoveRequest = { id: inputs.student } ;
-      let res: Res = await postAPI("http://localhost:3000/api/remove", data) ;
+      let res: Res = await postAPI("http://localhost:3000/api/remove_student", data) ;
 
       // Reset
       setInputs({ name: "", reg: "", student: "NULL", search: "" }) ;
+      getStudents() ;
 
-      console.log(res) ;
+      console.log(`Code: ${ res.code }`) ;
+      console.log(`Message: ${ res.message }`) ;
     }
     else
     {
@@ -160,8 +181,8 @@ function Home(): JSX.Element
       />
 
       <ul className="list-group mainText">
-        <li className="list-group-item"> <span> Khizer </span> </li>
-        <li className="list-group-item"> <span> Ashhad </span> </li>
+        <li className="list-group-item listItem"> <span> Khizer </span> </li>
+        <li className="list-group-item listItem"> <span> Ashhad </span> </li>
       </ul>
     </form>
   </>

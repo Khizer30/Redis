@@ -65,6 +65,26 @@
   box-shadow: 1px 1px var(--bs-gray-500) ;
 }
 
+/* List Item */
+.listItem
+{
+  transition: background ;
+  transition-duration: 300ms ;
+  transition-timing-function: ease ;
+}
+
+.listItem:hover
+{
+  color: var(--bs-gray-100) ;
+  background: var(--bs-gray-700) ;
+}
+
+.listItem:active
+{
+  color: inherit ;
+  background: inherit ;
+}
+
 /* Body */
 body
 {

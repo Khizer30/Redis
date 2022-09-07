@@ -1,15 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next" ;
 // ...
-import studentReposiory, { Student } from "../../config/redis" ;
-import { createResponse } from "../../lib/library" ;
+import { getStudents } from "../../config/redis" ;
 
 // Get Students
-async function getStudents(req: NextApiRequest, res: NextApiResponse): Promise<void>
+export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
 {
-  let students: Student[] = await studentReposiory.search().returnAll() ;
-
-  res.end(createResponse(200, students)) ;
+  res.end(await getStudents()) ;
 }
-
-// Export Get Students
-export default getStudents ;

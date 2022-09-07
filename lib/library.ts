@@ -1,6 +1,3 @@
-// ...
-import type { Student } from "../config/redis" ;
-
 // Res Interface
 interface Res
 {
