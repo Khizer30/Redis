@@ -65,7 +65,7 @@ async function getStudents(): Promise<string>
 
   try
   {
-    let students: Student[] = await studentRepository.search().returnAll() ;
+    let students: Student[] = await studentRepository.search().sortAscending("name").returnAll() ;
 
     await disconnect() ;
     return createResponse(200, JSON.stringify(students)) ;

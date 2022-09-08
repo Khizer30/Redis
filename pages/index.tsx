@@ -1,5 +1,6 @@
 import React, { useState } from "react" ;
 import Head from "next/head" ;
+import Fuse from "fuse.js" ;
 // ...
 import { getStudents } from "../config/redis" ;
 import { getAPI, postAPI, checkInput } from "../lib/library" ;
@@ -40,21 +41,35 @@ function Home(props: Props): JSX.Element
   // Variables
   const [inputs, setInputs] = useState<Inputs>({ name: "", reg: "", student: "NULL", search: "" }) ;
   const [students, setStudents] = useState<StudentObj[]>(props.students) ;
+  const [hits, setHits] = useState<Fuse.FuseResult<StudentObj>[]>([]) ;
+  
+  // Fuse
+  const fuse: Fuse<StudentObj> = new Fuse(students,
+  {
+    isCaseSensitive: false,
+    includeScore: false,
+    includeMatches: false,
+    shouldSort: true,
+    findAllMatches: false,
+    minMatchCharLength: 2,
+    threshold: 0.5,
+    keys: [ "name" ]
+  }) ;
 
   // Handle Change
-  function handleChange(event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>)
+  function handleChange(event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>): void
   {
     setInputs((values: Inputs) => ({ ...values, [event.target.name]: event.target.value })) ;
   }
 
   // Handle Submit
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>)
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void
   {
     event.preventDefault() ;
   }
 
   // Get Students
-  async function getStudents()
+  async function getStudents(): Promise<void>
   {
     let res: Res = await getAPI("http://localhost:3000/api/get_students") ;
     
@@ -70,6 +85,22 @@ function Home(props: Props): JSX.Element
       <option value={ x.entityId } key={ x.entityId } className="bold"> { x.name } </option>
     </>
     )
+  }
+
+  // Hits Mapper
+  function hitsMapper(x: Fuse.FuseResult<StudentObj>): JSX.Element
+  {
+    return (
+    <>
+      <li className="list-group-item listItem" onClick={ () => logStudent(x.item) } key={ x.item.entityId }> <span> { x.item.name } </span> </li>
+    </>
+    )
+  }
+
+  // Log Student
+  function logStudent(y: StudentObj): void
+  {
+    console.log(`Name: ${ y.name } +|+ Reg: ${ y.reg } +|+ ID: ${ y.entityId }`) ;
   }
 
   // Add Student
@@ -111,6 +142,22 @@ function Home(props: Props): JSX.Element
     else
     {
       console.warn("Complete Form!") ;
+    }
+  }
+
+  // Search Students
+  async function search(event: React.ChangeEvent<HTMLInputElement>): Promise<void>
+  {
+    let value: string = event.target.value ;
+    setInputs((values: Inputs) => ({ ...values, [event.target.name]: value })) ;
+
+    if (checkInput(value, 100) && value.length > 2)
+    {
+      setHits(fuse.search(value)) ;
+    }
+    else
+    {
+      setHits([]) ;
     }
   }
 
@@ -176,13 +223,14 @@ function Home(props: Props): JSX.Element
         maxLength={ 100 }
         required
         value={ inputs.search }
-        onChange={ handleChange }
+        onChange={ search }
         className="form-control mainText"
       />
 
       <ul className="list-group mainText">
-        <li className="list-group-item listItem"> <span> Khizer </span> </li>
-        <li className="list-group-item listItem"> <span> Ashhad </span> </li>
+      {
+        hits.map(hitsMapper)
+      }
       </ul>
     </form>
   </>
